@@ -1,0 +1,15 @@
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\bin\Debug\net7.0\LyreaRPG.exe
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\bin\Debug\net7.0\LyreaRPG.deps.json
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\bin\Debug\net7.0\LyreaRPG.runtimeconfig.json
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\bin\Debug\net7.0\LyreaRPG.dll
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\bin\Debug\net7.0\LyreaRPG.pdb
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\obj\Debug\net7.0\LyreaRPG.csproj.AssemblyReference.cache
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\obj\Debug\net7.0\LyreaRPG.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\obj\Debug\net7.0\LyreaRPG.AssemblyInfoInputs.cache
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\obj\Debug\net7.0\LyreaRPG.AssemblyInfo.cs
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\obj\Debug\net7.0\LyreaRPG.csproj.CoreCompileInputs.cache
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\obj\Debug\net7.0\LyreaRPG.dll
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\obj\Debug\net7.0\refint\LyreaRPG.dll
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\obj\Debug\net7.0\LyreaRPG.pdb
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\obj\Debug\net7.0\LyreaRPG.genruntimeconfig.cache
+C:\Users\capta\Documents\-LyreaRPG\LyreaRPG\obj\Debug\net7.0\ref\LyreaRPG.dll
