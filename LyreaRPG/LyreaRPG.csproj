@@ -7,4 +7,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Combat\" />
+    <Folder Include="Inventory\" />
+    <Folder Include="Dialogue\" />
+    <Folder Include="Saves\Characters\" />
+  </ItemGroup>
+
 </Project>
