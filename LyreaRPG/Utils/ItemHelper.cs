@@ -5,7 +5,7 @@ namespace LyreaRPG.Utils
 {
     public static class ItemHelper
     {
-        // Weapons
+        // Ranged Weapons
         public static readonly Item FlintlockPistol = new Item(
             "Flintlock Pistol", // Name
             "A reliable sidearm for close-range encounters.", // Description
@@ -35,6 +35,29 @@ namespace LyreaRPG.Utils
             false,
             15
         );
+
+        // 1 Handed Melee Weapons
+        public static readonly Item ShortSword = new Item(
+            "Shortsword",
+            "A common shortsword",
+            "1 Handed Weapon",
+            20,
+            1,
+            false,
+            6);
+
+        public static readonly Item Cutlass = new Item(
+            "Cutlass",
+            "A common sailor's weapon. A slightly curved blade.",
+            "1 Handed Weapon",
+            30,
+            1,
+            false,
+            7);
+
+        // 2 Handed Melee Weapons
+
+        // Specieal Weapons
 
         // Armor
         public static readonly Item SailorsShirt = new Item(
@@ -114,6 +137,26 @@ namespace LyreaRPG.Utils
             0.1
         );
 
+        // Necklaces and Amulets
+        public static readonly Item WavewardCoralAmulet = new Item(
+            "Waveward Coral Amulet",
+            "A piece of local jewlery.",
+            "Necklace",
+            15,
+            1,
+            false,
+            0.1
+        );
+        public static readonly Item ShellPendant = new Item(
+            "Shell Pendant",
+            "A shell hanging from a leather cord.",
+            "Necklace",
+            10,
+            1,
+            false,
+            0.1
+        );
+
         // Tools
         public static readonly Item GunpowderHorn = new Item(
             "Gunpowder Horn",
@@ -123,6 +166,24 @@ namespace LyreaRPG.Utils
             1,
             false,
             2
+        );
+        public static readonly Item Backpakc = new Item(
+            "Backpack",
+            "A canvas backpack for holding items.",
+            "Tool",
+            10,
+            1,
+            false,
+            3
+        );
+        public static readonly Item Compass = new Item(
+            "Compass",
+            "A trusty compass that always points North.",
+            "Tool",
+            10,
+            1,
+            false,
+            0.5
         );
 
         // Ammo
@@ -148,8 +209,8 @@ namespace LyreaRPG.Utils
 
         // Consumables
         public static readonly Item HealthPotion = new Item(
-            "Health Potion",
-            "Restores 20 HP.",
+            "Common Potion of Pain Relief",
+            "A common potion that staunches bleeding, cures aches and pains, and speeds up healing.",
             "Potion",
             10,
             1,
@@ -216,6 +277,8 @@ namespace LyreaRPG.Utils
             false,
             12
         );
+
+        // Trinkets
 
         // Helper Methods for Item Groups
         public static List<Item> GetAllWeapons()

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography;
 using LyreaRPG.Characters;
 using LyreaRPG.Utils;
 using LyreaRPG.World;
@@ -8,6 +7,48 @@ namespace LyreaRPG.Utils
 {
     public static class MenuHelper
     {
+        public static void DisplayWelcomeMenu(out Account account, out bool exitProgram)
+        {
+            account = null;
+            exitProgram = false;
+
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("Welcome to Lyrea!");
+                Console.WriteLine("1. Create Account");
+                Console.WriteLine("2. Login");
+                Console.WriteLine("3. Exit");
+                Console.WriteLine("Choose an option:");
+
+                string input = Console.ReadLine();
+                switch (input)
+                {
+                    case "1":
+                        if (AccountsHelper.CreateAccount(out string newUsername))
+                        {
+                            account = AccountsHelper.Login(); // Automatically log into the new account
+                            return;
+                        }
+                        break;
+                    case "2":
+                        account = AccountsHelper.Login();
+                        if (account != null)
+                        {
+                            return;
+                        }
+                        break;
+                    case "3":
+                        exitProgram = true;
+                        return;
+                    default:
+                        Console.WriteLine("Invalid choice. Press any key to try again.");
+                        Console.ReadKey();
+                        break;
+                }
+            }
+        }
+
         public static Player StartGame(string username)
         {
             Console.Clear();
@@ -123,57 +164,36 @@ namespace LyreaRPG.Utils
             {
                 Console.Clear();
                 Console.WriteLine("1. Explore The Sun Spur");
-                Console.WriteLine("2. View Inventory");
-                Console.WriteLine("3. Equip Item");
-                Console.WriteLine("4. View Stats and Skills");
-                Console.WriteLine("5. Save Character");
-                Console.WriteLine("6. Logout");
-                Console.WriteLine("7. Exit");
+                Console.WriteLine("2. Inventory Menu");
+                Console.WriteLine("3. View Stats and Skills");
+                Console.WriteLine("4. Save Character");
+                Console.WriteLine("5. Logout");
+                Console.WriteLine("6. Exit");
                 Console.WriteLine("Choose an option:");
 
                 string input = Console.ReadLine();
                 switch (input)
                 {
                     case "1":
-                        if (player != null)
-                        {
-                            var sunSpur = WorldSetup.InitializeSunSpur();
-                            LocationsHelper.ExploreRegion(sunSpur, player);
-                        }
-                        else
-                        {
-                            Console.WriteLine("No character loaded.");
-                            Console.ReadKey();
-                        }
+                        var sunSpur = WorldSetup.InitializeSunSpur();
+                        LocationsHelper.ExploreRegion(sunSpur, player);
                         break;
                     case "2":
-                        ActionsHelper.ShowInventory(player);
+                        DisplayInventoryMenu(player);
                         break;
                     case "3":
-                        Console.WriteLine("Select an item to equip:");
-                        player.DisplayInventory();
-
-                        Console.WriteLine("\nEnter the name of the item to equip:");
-                        string itemName = Console.ReadLine();
-                        EquipmentHelper.EquipItem(player, itemName);
-
-                        Console.WriteLine("Press any key to return.");
-                        Console.ReadKey();
-                        break;
-                    case "4":
                         ActionsHelper.ShowStats(player);
                         break;
-                    case "5":
+                    case "4":
                         CharacterStorageHelper.SaveCharacter(account.Username, player);
                         break;
-                    case "6":
+                    case "5":
+                        Console.WriteLine("Logging out...");
                         account = null;
                         player = null;
-                        Console.WriteLine("Logged out. Press any key to return.");
-                        Console.ReadKey();
                         exitMenu = true;
                         break;
-                    case "7":
+                    case "6":
                         Environment.Exit(0);
                         break;
                     default:
@@ -184,18 +204,104 @@ namespace LyreaRPG.Utils
             }
         }
 
-        public static void DisplayEquipMenu(Player player)
+        public static void DisplayInventoryMenu(Player player)
+        {
+            bool exitInventory = false;
+
+            while (!exitInventory)
+            {
+                Console.Clear();
+                ActionsHelper.ShowInventory(player);
+
+                Console.WriteLine("\nActions:");
+                Console.WriteLine("1. Equip Item");
+                Console.WriteLine("2. Back to Main Menu");
+                Console.WriteLine("Choose an action:");
+
+                string input = Console.ReadLine();
+                switch (input)
+                {
+                    case "1":
+                        Console.WriteLine("Select an item to equip:");
+                        player.DisplayInventory();
+
+                        Console.WriteLine("\nEnter the name of the item to equip:");
+                        string itemName = Console.ReadLine();
+                        EquipmentHelper.EquipItem(player, itemName);
+
+                        Console.WriteLine("Press any key to return to the inventory menu.");
+                        Console.ReadKey();
+                        break;
+                    case "2":
+                        exitInventory = true;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice. Press any key to try again.");
+                        Console.ReadKey();
+                        break;
+                }
+            }
+        }
+
+        public static Player HandleCharacterMenu(Account account)
         {
             Console.Clear();
-            Console.WriteLine("Select an item to equip:");
-            ActionsHelper.ShowInventory(player);
+            var characters = CharacterStorageHelper.LoadCharacters(account.Username);
 
-            Console.WriteLine("\nEnter the name of the item to equip:");
-            string itemName = Console.ReadLine();
-            EquipmentHelper.EquipItem(player, itemName);
+            if (characters.Count == 0)
+            {
+                Console.WriteLine("No saved characters found. Would you like to create a new character? (y/n)");
+                string input = Console.ReadLine()?.ToLower();
 
-            Console.WriteLine("Press any key to return.");
-            Console.ReadKey();
+                if (input == "y" || input == "yes")
+                {
+                    Player newPlayer = StartGame(account.Username);
+                    CharacterStorageHelper.SaveCharacter(account.Username, newPlayer);
+                    return newPlayer;
+                }
+                else
+                {
+                    Console.WriteLine("No character loaded. Returning to the main menu.");
+                    Console.WriteLine("Press any key to continue.");
+                    Console.ReadKey();
+                    return null;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Saved Characters:");
+                for (int i = 0; i < characters.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {characters[i].Name}");
+                }
+
+                Console.WriteLine($"{characters.Count + 1}. Create a New Character");
+
+                Console.WriteLine("Choose a character to load or create a new one:");
+                string input = Console.ReadLine();
+
+                if (int.TryParse(input, out int choice))
+                {
+                    if (choice > 0 && choice <= characters.Count)
+                    {
+                        Player selectedPlayer = characters[choice - 1];
+                        Console.WriteLine($"Character '{selectedPlayer.Name}' loaded successfully!");
+                        Console.WriteLine("Press any key to continue.");
+                        Console.ReadKey();
+                        return selectedPlayer;
+                    }
+                    else if (choice == characters.Count + 1)
+                    {
+                        Player newPlayer = StartGame(account.Username);
+                        CharacterStorageHelper.SaveCharacter(account.Username, newPlayer);
+                        return newPlayer;
+                    }
+                }
+
+                Console.WriteLine("Invalid input. Returning to main menu.");
+                Console.ReadKey();
+                return null;
+            }
         }
     }
 }

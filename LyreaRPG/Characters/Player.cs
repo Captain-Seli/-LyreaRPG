@@ -20,12 +20,12 @@ namespace LyreaRPG.Characters
         public int Gold { get; private set; } = 100; // Default starting gold
 
         // Primary Stats
-        public int Strength { get; private set; }
-        public int Dexterity { get; private set; }
-        public int Constitution { get; private set; }
-        public int Intelligence { get; private set; }
-        public int Wisdom { get; private set; }
-        public int Charisma { get; private set; }
+        public int Strength { get; protected set; }
+        public int Dexterity { get; protected set; }
+        public int Constitution { get; protected set; }
+        public int Intelligence { get; protected set; }
+        public int Wisdom { get; protected set; }
+        public int Charisma { get; protected set; }
 
 
         // Derived Stats
