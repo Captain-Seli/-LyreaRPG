@@ -102,40 +102,16 @@ namespace LyreaRPG
                                 Console.ReadKey();
                             }
                             break;
-                        case "6": // Logout
-                            if (player != null && account != null)
-                            {
-                                Console.WriteLine("Saving your progress before logging out...");
-                                CharacterStorageHelper.SaveCharacter(account.Username, player);
-                                Console.WriteLine("Progress saved successfully.");
-                            }
-                            else
-                            {
-                                Console.WriteLine("No character or account found to save.");
-                            }
-
-                            account = null;
-                            player = null;
-
-                            Console.WriteLine("You have been logged out. Press any key to return to the main menu.");
-                            Console.ReadKey();
+                        case "6":
+                            LogoutPlayer();
                             break;
                         case "7":
                             isRunning = false;
                             break;
-                        case "8": // New option for equipping items
+                        case "8":
                             if (player != null)
                             {
-                                Console.Clear();
-                                Console.WriteLine("Select an item to equip:");
-                                player.DisplayInventory();
-
-                                Console.WriteLine("\nEnter the name of the item to equip:");
-                                string itemName = Console.ReadLine();
-                                player.EquipItem(itemName);
-
-                                Console.WriteLine("Press any key to return.");
-                                Console.ReadKey();
+                                MenuHelper.DisplayEquipMenu(player);
                             }
                             else
                             {
@@ -148,6 +124,26 @@ namespace LyreaRPG
                             Console.ReadKey();
                             break;
                     }
+                }
+
+                static void LogoutPlayer()
+                {
+                    if (player != null && account != null)
+                    {
+                        Console.WriteLine("Saving your progress before logging out...");
+                        CharacterStorageHelper.SaveCharacter(account.Username, player);
+                        Console.WriteLine("Progress saved successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No character or account found to save.");
+                    }
+
+                    account = null;
+                    player = null;
+
+                    Console.WriteLine("You have been logged out. Press any key to return to the main menu.");
+                    Console.ReadKey();
                 }
             }
         }

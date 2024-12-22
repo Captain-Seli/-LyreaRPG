@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using LyreaRPG.Characters;
 using LyreaRPG.Utils;
+using LyreaRPG.World;
 
 namespace LyreaRPG.Utils
 {
@@ -111,6 +112,89 @@ namespace LyreaRPG.Utils
 
             Console.WriteLine(raceDescriptions[raceIndex]);
             Console.WriteLine("Press any key to return to race selection.");
+            Console.ReadKey();
+        }
+
+        public static void DisplayMainMenu(Account account, Player player)
+        {
+            bool exitMenu = false;
+
+            while (!exitMenu)
+            {
+                Console.Clear();
+                Console.WriteLine("1. Explore The Sun Spur");
+                Console.WriteLine("2. View Inventory");
+                Console.WriteLine("3. Equip Item");
+                Console.WriteLine("4. View Stats and Skills");
+                Console.WriteLine("5. Save Character");
+                Console.WriteLine("6. Logout");
+                Console.WriteLine("7. Exit");
+                Console.WriteLine("Choose an option:");
+
+                string input = Console.ReadLine();
+                switch (input)
+                {
+                    case "1":
+                        if (player != null)
+                        {
+                            var sunSpur = WorldSetup.InitializeSunSpur();
+                            LocationsHelper.ExploreRegion(sunSpur, player);
+                        }
+                        else
+                        {
+                            Console.WriteLine("No character loaded.");
+                            Console.ReadKey();
+                        }
+                        break;
+                    case "2":
+                        ActionsHelper.ShowInventory(player);
+                        break;
+                    case "3":
+                        Console.WriteLine("Select an item to equip:");
+                        player.DisplayInventory();
+
+                        Console.WriteLine("\nEnter the name of the item to equip:");
+                        string itemName = Console.ReadLine();
+                        EquipmentHelper.EquipItem(player, itemName);
+
+                        Console.WriteLine("Press any key to return.");
+                        Console.ReadKey();
+                        break;
+                    case "4":
+                        ActionsHelper.ShowStats(player);
+                        break;
+                    case "5":
+                        CharacterStorageHelper.SaveCharacter(account.Username, player);
+                        break;
+                    case "6":
+                        account = null;
+                        player = null;
+                        Console.WriteLine("Logged out. Press any key to return.");
+                        Console.ReadKey();
+                        exitMenu = true;
+                        break;
+                    case "7":
+                        Environment.Exit(0);
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice. Press any key to try again.");
+                        Console.ReadKey();
+                        break;
+                }
+            }
+        }
+
+        public static void DisplayEquipMenu(Player player)
+        {
+            Console.Clear();
+            Console.WriteLine("Select an item to equip:");
+            ActionsHelper.ShowInventory(player);
+
+            Console.WriteLine("\nEnter the name of the item to equip:");
+            string itemName = Console.ReadLine();
+            EquipmentHelper.EquipItem(player, itemName);
+
+            Console.WriteLine("Press any key to return.");
             Console.ReadKey();
         }
     }

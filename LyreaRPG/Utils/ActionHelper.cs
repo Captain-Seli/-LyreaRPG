@@ -44,7 +44,7 @@ namespace LyreaRPG.Utils
 
             Console.WriteLine("\nEnter the name of the item to equip:");
             string itemName = Console.ReadLine();
-            player.EquipItem(itemName);
+            EquipmentHelper.EquipItem(player, itemName);
 
             Console.WriteLine("Press any key to return.");
             Console.ReadKey();

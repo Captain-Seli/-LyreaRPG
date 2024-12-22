@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using LyreaRPG.Items;
+using LyreaRPG.Utils;
 
 namespace LyreaRPG.Characters
 {
@@ -71,25 +73,43 @@ namespace LyreaRPG.Characters
             InitializeStats();
             InitializeSkills();
             InitializeEquipmentSlots();
+            InitializeDefaultItems();
 
             // Default Starting Location
             CurrentRegion = "The Sun Spur";
             CurrentLocation = "Port Waveward";
             CurrentPOI = "The Harbor";
 
-            // Starting Equipment
-            Inventory.Add(new Item("Flintlock Pistol", "A reliable sidearm for close-range encounters.", "Weapon", 30, 1, false, 5));
-            Inventory.Add(new Item("Flintlock Shot", "A bag of 10 flintlock bullets.", "Ammo", 5, 1, true, 1));
-            Inventory.Add(new Item("Gunpowder Horn", "Stores enough gunpowder for 5 reloads.", "Tool", 5, 1, false, 3));
+            void InitializeEquipmentSlots()
+            {
+                EquipmentSlots = EquipmentHelper.InitializeSlots();
+            }
 
-            // Equipped Items
-            EquipmentSlots["Chest"] = "Sailor's Shirt";
-            EquipmentSlots["pants"] = "Sailor's Pants";
-            EquipmentSlots["Hands"] = "Sailor's Gloves";
-            EquipmentSlots["Head"] = "Tricorner Hat";
-            EquipmentSlots["Waist"] = "Leather Belt";
-            EquipmentSlots["Feet"] = "Leather Boots";
-            EquipmentSlots["Ring"] = "Brass Ring";
+            void InitializeDefaultItems()
+            {
+                // Add default inventory items
+                Inventory.AddRange(new[]
+                {
+            ItemHelper.SailorsShirt,
+            ItemHelper.SailorsPants,
+            ItemHelper.LeatherGloves,
+            ItemHelper.TricornerHat,
+            ItemHelper.LeatherBelt,
+            ItemHelper.LeatherBoots,
+            ItemHelper.BrassRing,
+            ItemHelper.FlintlockPistol,
+            ItemHelper.GunpowderHorn
+            });
+
+                // Equip default items silently using EquipmentHelper
+                EquipmentHelper.EquipItemSilently(this, ItemHelper.SailorsShirt.Name);
+                EquipmentHelper.EquipItemSilently(this, ItemHelper.SailorsPants.Name);
+                EquipmentHelper.EquipItemSilently(this, ItemHelper.LeatherGloves.Name);
+                EquipmentHelper.EquipItemSilently(this, ItemHelper.TricornerHat.Name);
+                EquipmentHelper.EquipItemSilently(this, ItemHelper.LeatherBelt.Name);
+                EquipmentHelper.EquipItemSilently(this, ItemHelper.LeatherBoots.Name);
+                EquipmentHelper.EquipItemSilently(this, ItemHelper.BrassRing.Name);
+            }
         }
 
         private void InitializeStats()
@@ -122,49 +142,11 @@ namespace LyreaRPG.Characters
 
         private void InitializeEquipmentSlots()
         {
-            var slots = new[] { "Helmet/Hat", "Face", "Neck", "Chest", "Hands", "Waist", "pants", "Left Arm", "Right Arm", "Left Leg", "Right Leg", "Feet", "Main Hand", "Offhand", "Ring" };
+            var slots = new[] { "Head", "Face", "Neck", "Chest", "Hands", "Waist", "Pants", "Left Arm", "Right Arm", "Left Leg", "Right Leg", "Feet", "Main Hand", "Offhand", "Ring" };
             foreach (var slot in slots)
             {
                 EquipmentSlots[slot] = null; // No item equipped initially
             }
-        }
-
-        public void EquipItem(string itemName)
-        {
-            var item = Inventory.FirstOrDefault(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
-            if (item == null)
-            {
-                Console.WriteLine("Item not found in inventory.");
-                return;
-            }
-
-            string targetSlot = item.Type switch
-            {
-                "Weapon" => "Main hand",
-                "Shield" => "Offhand",
-                "Necklace" => "Neck",
-                "Ring" => "Ring",
-                "Armor" => "Chest",
-                _ => null
-            };
-
-            if (targetSlot == null)
-            {
-                Console.WriteLine("This item cannot be equipped.");
-                return;
-            }
-
-            // Unequip existing item in the slot
-            if (EquipmentSlots[targetSlot] != null)
-            {
-                Console.WriteLine($"Unequipped {EquipmentSlots[targetSlot]} from {targetSlot}.");
-                AddItem(new Item(EquipmentSlots[targetSlot], "Unequipped item.", "Unequipped", 0));
-            }
-
-            // Equip new item
-            EquipmentSlots[targetSlot] = itemName;
-            Inventory.Remove(item);
-            Console.WriteLine($"{itemName} equipped to {targetSlot}.");
         }
 
         public void GainExperience(int amount)
@@ -308,15 +290,35 @@ namespace LyreaRPG.Characters
 
         public void AddItem(Item item)
         {
-            if (item != null)
+            double newWeight = CurrentWeight + (item.Weight * item.Quantity);
+            if (newWeight > MaxWeight)
             {
-                Inventory.Add(item);
-                Console.WriteLine($"{item} has been added to your inventory.");
+                Console.WriteLine($"Cannot add {item.Name}. Exceeds carrying capacity!");
+                return;
             }
-            else
+
+            Inventory.Add(item);
+            CurrentWeight = newWeight;
+            Console.WriteLine($"{item.Name} added to inventory. Current weight: {CurrentWeight}/{MaxWeight}");
+        }
+
+        public void RemoveItem(Item item, int quantity = 1)
+        {
+            var existingItem = Inventory.FirstOrDefault(i => i.Name == item.Name);
+            if (existingItem == null || existingItem.Quantity < quantity)
             {
-                Console.WriteLine("Cannot add an empty or invalid item.");
+                Console.WriteLine($"Not enough {item.Name} in inventory.");
+                return;
             }
+
+            existingItem.Quantity -= quantity;
+            if (existingItem.Quantity <= 0)
+            {
+                Inventory.Remove(existingItem);
+            }
+
+            CurrentWeight -= item.Weight * quantity;
+            Console.WriteLine($"{item.Name} removed. Current weight: {CurrentWeight}/{MaxWeight}");
         }
 
         public void DisplayInventory()

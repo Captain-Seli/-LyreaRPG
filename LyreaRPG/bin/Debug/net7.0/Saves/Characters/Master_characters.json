@@ -14,117 +14,8 @@
     "BaseHealth": 8,
     "Health": 18,
     "Speed": 40,
-    "Sanity": 100,
-    "Skills": {
-      "Range": {
-        "Name": "Range",
-        "Level": 1,
-        "Experience": 0
-      },
-      "Melee": {
-        "Name": "Melee",
-        "Level": 1,
-        "Experience": 0
-      },
-      "Medicine": {
-        "Name": "Medicine",
-        "Level": 1,
-        "Experience": 0
-      },
-      "Speaking": {
-        "Name": "Speaking",
-        "Level": 1,
-        "Experience": 0
-      },
-      "Cooking": {
-        "Name": "Cooking",
-        "Level": 1,
-        "Experience": 0
-      },
-      "Alchemy": {
-        "Name": "Alchemy",
-        "Level": 1,
-        "Experience": 0
-      },
-      "Survival": {
-        "Name": "Survival",
-        "Level": 1,
-        "Experience": 0
-      },
-      "Crafting": {
-        "Name": "Crafting",
-        "Level": 1,
-        "Experience": 0
-      },
-      "Lore": {
-        "Name": "Lore",
-        "Level": 1,
-        "Experience": 0
-      },
-      "Sailing": {
-        "Name": "Sailing",
-        "Level": 1,
-        "Experience": 0
-      },
-      "Stealth": {
-        "Name": "Stealth",
-        "Level": 1,
-        "Experience": 0
-      },
-      "Hunting": {
-        "Name": "Hunting",
-        "Level": 1,
-        "Experience": 0
-      },
-      "Tinkering": {
-        "Name": "Tinkering",
-        "Level": 1,
-        "Experience": 0
-      },
-      "Diplomacy": {
-        "Name": "Diplomacy",
-        "Level": 1,
-        "Experience": 0
-      }
-    },
-    "CanChannel": false,
-    "ChannelingPower": "None",
-    "Inventory": [],
-    "EquipmentSlots": {
-      "Helmet/Hat": null,
-      "Face": null,
-      "Neck": null,
-      "Chest": null,
-      "Hands": null,
-      "Waist": null,
-      "Left Arm": null,
-      "Right Arm": null,
-      "Left Leg": null,
-      "Right Leg": null,
-      "Feet": null,
-      "Main Hand": null,
-      "Offhand": null,
-      "Ring": null
-    },
-    "CurrentPOI": "The Harbor",
-    "CurrentLocation": "Port Waveward",
-    "CurrentRegion": "The Sun Spur"
-  },
-  {
-    "Name": "Manhu",
-    "Level": 1,
-    "Experience": 0,
-    "SkillPoints": 0,
-    "Gold": 50,
-    "Strength": 10,
-    "Dexterity": 10,
-    "Constitution": 10,
-    "Intelligence": 10,
-    "Wisdom": 10,
-    "Charisma": 10,
-    "BaseHealth": 8,
-    "Health": 18,
-    "Speed": 40,
+    "MaxWeight": 100,
+    "CurrentWeight": 7,
     "Sanity": 100,
     "Skills": {
       "Range": {
@@ -202,30 +93,177 @@
     "ChannelingPower": "None",
     "Inventory": [
       {
-        "Name": "Sword",
-        "Description": "A basic steel sword.",
-        "Type": "Weapon",
-        "Value": 50,
-        "Quantity": 1
+        "Name": "Flintlock Pistol",
+        "Description": "A reliable sidearm for close-range encounters.",
+        "Type": "1 Handed Weapon",
+        "Value": 30,
+        "Quantity": 1,
+        "IsAmmo": false,
+        "Weight": 5
+      },
+      {
+        "Name": "Gunpowder Horn",
+        "Description": "Stores enough gunpowder for 5 reloads.",
+        "Type": "Tool",
+        "Value": 5,
+        "Quantity": 1,
+        "IsAmmo": false,
+        "Weight": 2
       }
     ],
     "EquipmentSlots": {
-      "Helmet/Hat": null,
+      "Head": "Tricorner Hat",
       "Face": null,
       "Neck": null,
-      "Chest": null,
-      "Hands": null,
-      "Waist": null,
+      "Chest": "Sailor\u0027s Shirt",
+      "Hands": "Sailor\u0027s Gloves",
+      "Waist": "Leather Belt",
+      "Pants": null,
       "Left Arm": null,
       "Right Arm": null,
       "Left Leg": null,
       "Right Leg": null,
-      "Feet": null,
+      "Feet": "Leather Boots",
       "Main Hand": null,
       "Offhand": null,
-      "Ring": null
+      "Ring": "Brass Ring",
+      "pants": "Sailor\u0027s Pants"
     },
-    "CurrentPOI": "Powder and Steel",
+    "CurrentPOI": "The Harbor",
+    "CurrentLocation": "Port Waveward",
+    "CurrentRegion": "The Sun Spur"
+  },
+  {
+    "Name": "Manhu",
+    "Level": 1,
+    "Experience": 0,
+    "SkillPoints": 0,
+    "Gold": 100,
+    "Strength": 10,
+    "Dexterity": 10,
+    "Constitution": 10,
+    "Intelligence": 10,
+    "Wisdom": 10,
+    "Charisma": 10,
+    "BaseHealth": 8,
+    "Health": 18,
+    "Speed": 40,
+    "MaxWeight": 100,
+    "CurrentWeight": 7,
+    "Sanity": 100,
+    "Skills": {
+      "Range": {
+        "Name": "Range",
+        "Level": 1,
+        "Experience": 0
+      },
+      "Melee": {
+        "Name": "Melee",
+        "Level": 1,
+        "Experience": 0
+      },
+      "Medicine": {
+        "Name": "Medicine",
+        "Level": 1,
+        "Experience": 0
+      },
+      "Speaking": {
+        "Name": "Speaking",
+        "Level": 1,
+        "Experience": 0
+      },
+      "Cooking": {
+        "Name": "Cooking",
+        "Level": 1,
+        "Experience": 0
+      },
+      "Alchemy": {
+        "Name": "Alchemy",
+        "Level": 1,
+        "Experience": 0
+      },
+      "Survival": {
+        "Name": "Survival",
+        "Level": 1,
+        "Experience": 0
+      },
+      "Crafting": {
+        "Name": "Crafting",
+        "Level": 1,
+        "Experience": 0
+      },
+      "Lore": {
+        "Name": "Lore",
+        "Level": 1,
+        "Experience": 0
+      },
+      "Sailing": {
+        "Name": "Sailing",
+        "Level": 1,
+        "Experience": 0
+      },
+      "Stealth": {
+        "Name": "Stealth",
+        "Level": 1,
+        "Experience": 0
+      },
+      "Hunting": {
+        "Name": "Hunting",
+        "Level": 1,
+        "Experience": 0
+      },
+      "Tinkering": {
+        "Name": "Tinkering",
+        "Level": 1,
+        "Experience": 0
+      },
+      "Diplomacy": {
+        "Name": "Diplomacy",
+        "Level": 1,
+        "Experience": 0
+      }
+    },
+    "CanChannel": false,
+    "ChannelingPower": "None",
+    "Inventory": [
+      {
+        "Name": "Flintlock Pistol",
+        "Description": "A reliable sidearm for close-range encounters.",
+        "Type": "1 Handed Weapon",
+        "Value": 30,
+        "Quantity": 1,
+        "IsAmmo": false,
+        "Weight": 5
+      },
+      {
+        "Name": "Gunpowder Horn",
+        "Description": "Stores enough gunpowder for 5 reloads.",
+        "Type": "Tool",
+        "Value": 5,
+        "Quantity": 1,
+        "IsAmmo": false,
+        "Weight": 2
+      }
+    ],
+    "EquipmentSlots": {
+      "Head": "Tricorner Hat",
+      "Face": null,
+      "Neck": null,
+      "Chest": "Sailor\u0027s Shirt",
+      "Hands": "Sailor\u0027s Gloves",
+      "Waist": "Leather Belt",
+      "Pants": null,
+      "Left Arm": null,
+      "Right Arm": null,
+      "Left Leg": null,
+      "Right Leg": null,
+      "Feet": "Leather Boots",
+      "Main Hand": null,
+      "Offhand": null,
+      "Ring": "Brass Ring",
+      "pants": "Sailor\u0027s Pants"
+    },
+    "CurrentPOI": "The Harbor",
     "CurrentLocation": "Port Waveward",
     "CurrentRegion": "The Sun Spur"
   }
