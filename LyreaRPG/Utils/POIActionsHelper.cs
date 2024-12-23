@@ -127,7 +127,7 @@ namespace LyreaRPG.Utils
             if (int.TryParse(input, out int choice) && choice > 0 && choice <= shopItems.Count)
             {
                 var selectedItem = shopItems[choice - 1];
-                if (player.Gold >= selectedItem.Value)
+                if (player.Money >= selectedItem.Value)
                 {
                     player.SpendGold(selectedItem.Value);
                     player.AddItem(new Item(selectedItem.Name, selectedItem.Description, selectedItem.Type, selectedItem.Value));
@@ -317,7 +317,7 @@ namespace LyreaRPG.Utils
             if (int.TryParse(input, out int choice) && choice > 0 && choice <= shopItems.Count)
             {
                 var selectedItem = shopItems[choice - 1];
-                if (player.Gold >= selectedItem.Value)
+                if (player.Money >= selectedItem.Value)
                 {
                     player.SpendGold(selectedItem.Value);
                     player.AddItem(new Item(selectedItem.Name, selectedItem.Description, selectedItem.Type, selectedItem.Value));

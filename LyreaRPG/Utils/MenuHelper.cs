@@ -125,7 +125,7 @@ namespace LyreaRPG.Utils
             player.DisplayStats();
 
             // Display starting gold and inventory
-            Console.WriteLine($"Starting Gold: {player.Gold}");
+            Console.WriteLine($"Starting Money: {player.Money}");
             Console.WriteLine("Press any key to continue.");
             Console.ReadKey();
 
@@ -167,8 +167,9 @@ namespace LyreaRPG.Utils
                 Console.WriteLine("2. Inventory Menu");
                 Console.WriteLine("3. View Stats and Skills");
                 Console.WriteLine("4. Save Character");
-                Console.WriteLine("5. Logout");
-                Console.WriteLine("6. Exit");
+                Console.WriteLine("5. NPC Debug Menu (Dev Only)");
+                Console.WriteLine("6. Logout");
+                Console.WriteLine("7. Exit");
                 Console.WriteLine("Choose an option:");
 
                 string input = Console.ReadLine();
@@ -188,12 +189,15 @@ namespace LyreaRPG.Utils
                         CharacterStorageHelper.SaveCharacter(account.Username, player);
                         break;
                     case "5":
+                        DisplayNPCDebugMenu();
+                        break;
+                    case "6":
                         Console.WriteLine("Logging out...");
                         account = null;
                         player = null;
                         exitMenu = true;
                         break;
-                    case "6":
+                    case "7":
                         Environment.Exit(0);
                         break;
                     default:
@@ -301,6 +305,41 @@ namespace LyreaRPG.Utils
                 Console.WriteLine("Invalid input. Returning to main menu.");
                 Console.ReadKey();
                 return null;
+            }
+        }
+        // Debug Menu to view NPC stats
+        public static void DisplayNPCDebugMenu()
+        {
+            bool exitDebug = false;
+
+            while (!exitDebug)
+            {
+                Console.Clear();
+                Console.WriteLine("NPC Debug Menu");
+                Console.WriteLine("1. Generate and View Random NPC");
+                Console.WriteLine("2. Return to Main Menu");
+                Console.WriteLine("Choose an option:");
+
+                string input = Console.ReadLine();
+
+                switch (input)
+                {
+                    case "1":
+                        NPC randomNPC = NPCHelper.GenerateRandomNPC();
+                        Console.Clear();
+                        randomNPC.DisplayStats();
+                        Console.WriteLine("\nPress any key to return.");
+                        Console.ReadKey();
+                        break;
+                    case "2":
+                        exitDebug = true;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice. Press any key to try again.");
+                        Console.ReadKey();
+                        break;
+                }
+
             }
         }
     }

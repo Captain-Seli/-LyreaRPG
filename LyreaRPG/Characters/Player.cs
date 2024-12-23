@@ -1,7 +1,10 @@
 ﻿// Full Player Class with Races and Features
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Emit;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using LyreaRPG.Items;
 using LyreaRPG.Utils;
@@ -12,12 +15,17 @@ namespace LyreaRPG.Characters
     {
         // Basic Info
         public string Name { get; set; }
-        public int Level { get; private set; } = 1;
+        public string Race { get; set; }
+        public string Gender { get; set; }
+        public int Level { get; protected set; } = 1;
         public int Experience { get; private set; } = 0;
         public int SkillPoints { get; private set; } = 0;
+        public string Background { get; set; }
+        public int Age { get; set; }
+        
 
-        // Gold property
-        public int Gold { get; private set; } = 100; // Default starting gold
+        // Money property
+        public int Money { get; private set; } = 100; // Default starting money
 
         // Primary Stats
         public int Strength { get; protected set; }
@@ -37,21 +45,24 @@ namespace LyreaRPG.Characters
 
 
         // Sanity
-        public int Sanity { get; private set; } = 100;
+        public int Sanity { get; protected set; } = 100;
+
+        // Faction
+        public string Faction { get; protected set; }
 
         // Skills
         public Dictionary<string, Skill> Skills { get; private set; } = new();
-        public bool CanChannel { get; private set; } = false;
-        public string ChannelingPower { get; private set; } = "None";
+        public bool CanChannel { get; protected set; } = false;
+        public string ChannelingPower { get; protected set; } = "None";
 
         // Inventory and Wearable Slots
-        public List<Item> Inventory { get; private set; } = new();
-        public Dictionary<string, string> EquipmentSlots { get; private set; } = new();
+        public List<Item> Inventory { get; protected set; } = new();
+        public Dictionary<string, string> EquipmentSlots { get; protected set; } = new();
 
         // Add tracking fields
-        public string CurrentPOI { get; private set; } = "None";
-        public string CurrentLocation { get; private set; } = "None";
-        public string CurrentRegion { get; private set; } = "None";
+        public string CurrentPOI { get; protected set; } = "None";
+        public string CurrentLocation { get; protected set; } = "None";
+        public string CurrentRegion { get; protected set; } = "None";
 
         public void SetPOI(string region, string location, string poi)
         {
@@ -111,6 +122,34 @@ namespace LyreaRPG.Characters
                 EquipmentHelper.EquipItemSilently(this, ItemHelper.BrassRing.Name);
             }
         }
+
+        // Setter Methods
+        public void SetRace(string race) => Race = race;
+        public void SetGender(string gender) => Gender = gender;
+        public void SetAge(int age) => Age = age;
+        public void SetBackground(string background) => Background = background;
+        public void SetLevel(int level) => Level = level;
+        public void SetStats(int strength, int dexterity, int constitution, int intelligence, int wisdom, int charisma)
+        {
+            Strength = strength;
+            Dexterity = dexterity;
+            Constitution = constitution;
+            Intelligence = intelligence;
+            Wisdom = wisdom;
+            Charisma = charisma;
+        }
+
+        public void SetSanity(int sanity) => Sanity = Math.Clamp(sanity, 0, 100);
+        public void SetChannelingPower(string power)
+        {
+            CanChannel = true;
+            ChannelingPower = power;
+            if (!Skills.ContainsKey("Channeling"))
+                Skills.Add("Channeling", new Skill("Channeling"));
+        }
+
+        public void SetInventory(List<Item> inventory) => Inventory = new List<Item>(inventory);
+        public void SetFaction(string faction) => Faction = faction;
 
         private void InitializeStats()
         {
@@ -249,21 +288,21 @@ namespace LyreaRPG.Characters
 
         public void AddGold(int amount)
         {
-            Gold += amount;
-            Console.WriteLine($"{amount} gold added. You now have {Gold} gold.");
+            Money += amount;
+            Console.WriteLine($"{amount} money added. You now have {Money} money.");
         }
 
         public bool SpendGold(int amount)
         {
-            if (Gold >= amount)
+            if (Money >= amount)
             {
-                Gold -= amount;
-                Console.WriteLine($"{amount} gold spent. You now have {Gold} gold.");
+                Money -= amount;
+                Console.WriteLine($"{amount} money spent. You now have {Money} money.");
                 return true;
             }
             else
             {
-                Console.WriteLine("Not enough gold!");
+                Console.WriteLine("Not enough money!");
                 return false;
             }
         }
@@ -271,8 +310,8 @@ namespace LyreaRPG.Characters
         // Method to earn gold
         public void EarnGold(int amount)
         {
-            Gold += amount;
-            Console.WriteLine($"You earned {amount} gold. Total gold: {Gold}.");
+            Money += amount;
+            Console.WriteLine($"You earned {amount} money. Total money: {Money}.");
         }
 
         // Method to set gold (for debugging or admin purposes)
@@ -280,12 +319,12 @@ namespace LyreaRPG.Characters
         {
             if (amount < 0)
             {
-                Console.WriteLine("Gold cannot be set to a negative value.");
+                Console.WriteLine("Money cannot be set to a negative value.");
                 return;
             }
 
-            Gold = amount;
-            Console.WriteLine($"Gold has been set to {Gold}.");
+            Money = amount;
+            Console.WriteLine($"Gold has been set to {Money}.");
         }
 
         public void AddItem(Item item)
@@ -326,7 +365,7 @@ namespace LyreaRPG.Characters
             Console.WriteLine("Inventory:");
 
             // Display Gold as part of the inventory
-            Console.WriteLine($"  - Gold: {Gold}");
+            Console.WriteLine($"  - Gold: {Money}");
 
             // Display other items in inventory
             if (Inventory.Count == 0)
@@ -467,5 +506,7 @@ namespace LyreaRPG.Characters
                 Console.WriteLine($"{Name} leveled up to Level {Level}!");
             }
         }
+
     }
+
 }

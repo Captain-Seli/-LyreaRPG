@@ -1,10 +1,14 @@
 [
   {
     "Name": "Cthulhu",
+    "Race": null,
+    "Gender": null,
     "Level": 1,
     "Experience": 0,
     "SkillPoints": 0,
-    "Gold": 100,
+    "Background": null,
+    "Age": 0,
+    "Money": 100,
     "Strength": 10,
     "Dexterity": 10,
     "Constitution": 10,
@@ -15,8 +19,9 @@
     "Health": 18,
     "Speed": 40,
     "MaxWeight": 100,
-    "CurrentWeight": 7,
+    "CurrentWeight": 0,
     "Sanity": 100,
+    "Faction": null,
     "Skills": {
       "Range": {
         "Name": "Range",
@@ -116,9 +121,9 @@
       "Face": null,
       "Neck": null,
       "Chest": "Sailor\u0027s Shirt",
-      "Hands": "Sailor\u0027s Gloves",
+      "Hands": "Leather Gloves",
       "Waist": "Leather Belt",
-      "Pants": null,
+      "Pants": "Sailor Pants",
       "Left Arm": null,
       "Right Arm": null,
       "Left Leg": null,
@@ -126,8 +131,7 @@
       "Feet": "Leather Boots",
       "Main Hand": null,
       "Offhand": null,
-      "Ring": "Brass Ring",
-      "pants": "Sailor\u0027s Pants"
+      "Ring": "Brass Ring"
     },
     "CurrentPOI": "The Harbor",
     "CurrentLocation": "Port Waveward",
@@ -135,10 +139,14 @@
   },
   {
     "Name": "Manhu",
+    "Race": null,
+    "Gender": null,
     "Level": 1,
     "Experience": 0,
     "SkillPoints": 0,
-    "Gold": 100,
+    "Background": null,
+    "Age": 0,
+    "Money": 100,
     "Strength": 10,
     "Dexterity": 10,
     "Constitution": 10,
@@ -149,8 +157,9 @@
     "Health": 18,
     "Speed": 40,
     "MaxWeight": 100,
-    "CurrentWeight": 7,
+    "CurrentWeight": 0,
     "Sanity": 100,
+    "Faction": null,
     "Skills": {
       "Range": {
         "Name": "Range",
@@ -243,6 +252,15 @@
         "Quantity": 1,
         "IsAmmo": false,
         "Weight": 2
+      },
+      {
+        "Name": "Herbs",
+        "Description": "Medicinal herbs for crafting or selling.",
+        "Type": "Material",
+        "Value": 10,
+        "Quantity": 3,
+        "IsAmmo": false,
+        "Weight": 0
       }
     ],
     "EquipmentSlots": {
@@ -250,9 +268,9 @@
       "Face": null,
       "Neck": null,
       "Chest": "Sailor\u0027s Shirt",
-      "Hands": "Sailor\u0027s Gloves",
+      "Hands": "Leather Gloves",
       "Waist": "Leather Belt",
-      "Pants": null,
+      "Pants": "Sailor Pants",
       "Left Arm": null,
       "Right Arm": null,
       "Left Leg": null,
@@ -260,11 +278,10 @@
       "Feet": "Leather Boots",
       "Main Hand": null,
       "Offhand": null,
-      "Ring": "Brass Ring",
-      "pants": "Sailor\u0027s Pants"
+      "Ring": "Brass Ring"
     },
-    "CurrentPOI": "The Harbor",
-    "CurrentLocation": "Port Waveward",
+    "CurrentPOI": "Sandy Flats",
+    "CurrentLocation": "Barnacle Flats",
     "CurrentRegion": "The Sun Spur"
   }
 ]

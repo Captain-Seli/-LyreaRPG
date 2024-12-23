@@ -279,6 +279,15 @@ namespace LyreaRPG.Utils
         );
 
         // Trinkets
+        public static readonly Item WoodenTotem = new Item(
+            "Wooden Totem",
+            "A small unremarkable wood totem of minor value.",
+            "Trinket",
+            1,
+            1,
+            false,
+            0.01
+        );
 
         // Helper Methods for Item Groups
         public static List<Item> GetAllWeapons()
