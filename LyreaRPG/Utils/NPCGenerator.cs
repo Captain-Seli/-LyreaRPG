@@ -26,16 +26,18 @@ namespace LyreaRPG.AI
         public static NPC GenerateRandomNPC()
         {
             var race = AssignRace(); // Assign race first
-            var npc = new NPC(GenerateName(race)); // Pass race to GenerateName
+            var gender = AssignGender();
+            var npc = new NPC(GenerateName(race, gender)); // Pass race to GenerateName
 
             npc.SetRace(race);
-            npc.SetGender(AssignGender());
+            npc.SetGender(gender);
             npc.SetAge(GenerateAge(race)); // Pass race to GenerateAge
             npc.SetBackground(AssignBackground());
             npc.SetLevel(Random.Next(1, 11));
             npc.SetLikes(GenerateLikes());
             npc.SetDislikes(GenerateDislikes(race));
-            npc.SetPersonality(GeneratePersonality());
+            npc.SetPersonality();
+            AssignDisposition(npc);
             npc.SetFaction(AssignFaction(race));
             npc.SetInventory(GenerateInventory());
             npc.SetLootTable(GenerateLootTable());
@@ -65,31 +67,34 @@ namespace LyreaRPG.AI
             return Random.Next(0, 2) == 0 ? "Male" : "Female";
         }
 
-        private static string GenerateName(string race = null)
+        private static string GenerateName(string race = null, string gender = null)
         {
-            // Assign race if not provided
-            race ??= AssignRace();
-            string gender = AssignGender();
-
-            // Determine the appropriate keys for first names and surnames
-            string firstNamesKey = gender == "Male" ? "MaleFirstNames" : "FemaleFirstNames";
-            string surnamesKey = "Surnames";
 
             // Check if race exists in NamesData
             if (!NamesData.ContainsKey(race))
                 throw new KeyNotFoundException($"Race '{race}' not found in npc_names.json.");
 
-            // Check if the required keys exist for the race
-            if (!NamesData[race].ContainsKey(firstNamesKey) || !NamesData[race].ContainsKey(surnamesKey))
-                throw new KeyNotFoundException($"Missing keys for race '{race}' in npc_names.json. Expected keys: '{firstNamesKey}', '{surnamesKey}'.");
+            // Determine the appropriate keys for first names and surnames
+            string firstNamesKey = gender == "Male" ? "MaleFirstNames" : "FemaleFirstNames";
+            string surnamesKey = "Surnames";
+
+            // Validate that race has required keys for first names and surnames
+            if (!NamesData[race].ContainsKey(firstNamesKey))
+                throw new KeyNotFoundException($"Key '{firstNamesKey}' not found for race '{race}' in npc_names.json.");
+
+            if (!NamesData[race].ContainsKey(surnamesKey))
+                throw new KeyNotFoundException($"Key '{surnamesKey}' not found for race '{race}' in npc_names.json.");
 
             // Retrieve the lists of first names and surnames
             var firstNameList = ((JArray)NamesData[race][firstNamesKey]).ToObject<List<string>>();
             var surnameList = ((JArray)NamesData[race][surnamesKey]).ToObject<List<string>>();
 
             // Validate the lists
-            if (firstNameList == null || surnameList == null || firstNameList.Count == 0 || surnameList.Count == 0)
-                throw new InvalidOperationException($"Invalid or missing name data for race '{race}' and gender '{gender}'.");
+            if (firstNameList == null || firstNameList.Count == 0)
+                throw new InvalidOperationException($"No first names found for race '{race}' and gender '{gender}'.");
+
+            if (surnameList == null || surnameList.Count == 0)
+                throw new InvalidOperationException($"No surnames found for race '{race}'.");
 
             // Generate random first name and surname
             string firstName = firstNameList[Random.Next(firstNameList.Count)];
@@ -98,14 +103,15 @@ namespace LyreaRPG.AI
             return $"{firstName} {surname}";
         }
 
+
         private static int GenerateAge(string race)
         {
             return race switch
             {
-                "Human" => Random.Next(16, 70),
-                "Carcharia" => Random.Next(20, 100),
-                "Molluska" => Random.Next(30, 150),
-                "Crabaxi" => Random.Next(25, 120),
+                "Human" => Random.Next(16, 100),
+                "Carcharia" => Random.Next(15, 100),
+                "Molluska" => Random.Next(20, 150),
+                "Crabaxi" => Random.Next(20, 120),
                 "Elf" => Random.Next(100, 300),
                 "Sinai" => Random.Next(30, 120),
                 _ => 25
@@ -141,108 +147,86 @@ namespace LyreaRPG.AI
             var dislikes = new List<string>();
             foreach (var category in LikesData.Dislikes)
             {
-                var options = category.Value as List<string>;
+                var options = ((JArray)category.Value).ToObject<List<string>>();
                 if (options != null && options.Count > 0)
-                {
-                    var selectedDislike = options[Random.Next(options.Count)];
-
-                    // Exclude the faction from dislikes
-                    if (selectedDislike != faction)
-                    {
-                        dislikes.Add(selectedDislike);
-                    }
-                }
+                    dislikes.Add(options[Random.Next(options.Count)]);
             }
-
             return dislikes;
         }
 
 
-        private static Dictionary<string, string> GeneratePersonality()
+        public static Dictionary<string, string> GeneratePersonality()
         {
-            var traits = ((JArray)PersonalityData.personality.traits).ToObject<List<string>>();
-            var ideals = ((JArray)PersonalityData.personality.ideals).ToObject<List<string>>();
-            var bonds = ((JArray)PersonalityData.personality.bonds).ToObject<List<string>>();
-            var flaws = ((JArray)PersonalityData.personality.flaws).ToObject<List<string>>();
-
-            if (traits == null || traits.Count == 0 || ideals == null || ideals.Count == 0 ||
-                bonds == null || bonds.Count == 0 || flaws == null || flaws.Count == 0)
+            if (PersonalityData.Traits.Count == 0 ||
+                PersonalityData.Ideals.Count == 0 ||
+                PersonalityData.Bonds.Count == 0 ||
+                PersonalityData.Flaws.Count == 0)
             {
-                throw new InvalidOperationException("PersonalityData is not properly formatted or missing required properties.");
+                throw new InvalidOperationException("PersonalityData lists are not properly initialized or are empty.");
             }
 
             return new Dictionary<string, string>
     {
-        { "Trait", traits[Random.Next(traits.Count)] },
-        { "Ideal", ideals[Random.Next(ideals.Count)] },
-        { "Bond", bonds[Random.Next(bonds.Count)] },
-        { "Flaw", flaws[Random.Next(flaws.Count)] }
+        { "Trait", PersonalityData.Traits[Random.Next(PersonalityData.Traits.Count)] },
+        { "Ideal", PersonalityData.Ideals[Random.Next(PersonalityData.Ideals.Count)] },
+        { "Bond", PersonalityData.Bonds[Random.Next(PersonalityData.Bonds.Count)] },
+        { "Flaw", PersonalityData.Flaws[Random.Next(PersonalityData.Flaws.Count)] }
     };
+        }
+
+        private static void AssignDisposition(NPC npc)
+        {
+            // Assign Friendliness based on Background
+            npc.Friendliness = npc.Background switch
+            {
+                "Pirate" => FriendlinessLevel.Hostile,
+                "Merchant" => FriendlinessLevel.Neutral,
+                "Scholar" => FriendlinessLevel.Friendly,
+                _ => FriendlinessLevel.Neutral
+            };
+
+            // Assign Aggression based on Faction and Personality Traits
+            npc.Aggression = npc.Friendliness switch
+            {
+                FriendlinessLevel.Hostile when npc.Background == "Pirate" => AggressionLevel.Aggressive,
+                FriendlinessLevel.Neutral => AggressionLevel.Opportunistic,
+                FriendlinessLevel.Friendly => AggressionLevel.Pacifist,
+                _ => AggressionLevel.Defensive
+            };
         }
 
         private static string AssignFaction(string race)
         {
             var factionsByRace = new Dictionary<string, List<string>>
     {
-        { "Human", new List<string>
-            {
-                "West Azonian Trading Company", "Royal Azonian Army", "Royal Azonian Navy", "Order of Light",
-                "Ars Notoria", "Slayers", "Black Squids", "Circle Knights", "Harbingers of the Eternal Weave",
-                "Cobras", "Merchant's Guild", "Artisan's Guild", "Craftsman's Guild", "The Kingdom of Azon",
-                "The Republic of Kyran", "The Empire of Venia", "The Frayed"
-            }
-        },
-        { "Elf", new List<string>
-            {
-                "West Azonian Trading Company", "Ars Notoria", "Slayers", "Black Squids",
-                "Merchant's Guild", "Artisan's Guild", "Craftsman's Guild", "Alran Taesi"
-            }
-        },
-        { "Sinai", new List<string>
-            {
-                "West Azonian Trading Company", "Ars Notoria", "Slayers", "Black Squids", "Cobras",
-                "Merchant's Guild", "Artisan's Guild", "Craftsman's Guild", "The Empire of Venia", "Sinai"
-            }
-        },
-        { "Carcharia", new List<string>
-            {
-                "West Azonian Trading Company", "Slayers", "Black Squids", "Merchant's Guild",
-                "Artisan's Guild", "Craftsman's Guild", "The Kingdom of Azon", "The Republic of Kyran",
-                "The Emerald Empire"
-            }
-        },
-        { "Crabaxi", new List<string>
-            {
-                "West Azonian Trading Company", "Slayers", "Black Squids", "Merchant's Guild",
-                "Artisan's Guild", "Craftsman's Guild", "The Kingdom of Azon", "The Republic of Kyran",
-                "The Emerald Empire"
-            }
-        },
-        { "Molluska", new List<string>
-            {
-                "West Azonian Trading Company", "Slayers", "Black Squids", "Merchant's Guild",
-                "Artisan's Guild", "Craftsman's Guild", "The Kingdom of Azon", "The Republic of Kyran",
-                "The Emerald Empire"
-            }
-        },
-        { "Saltatrix", new List<string>
-            {
-                "West Azonian Trading Company", "Slayers", "Black Squids", "Merchant's Guild",
-                "Artisan's Guild", "Craftsman's Guild", "The Kingdom of Azon", "The Republic of Kyran",
-                "The Emerald Empire"
-            }
-        }
+        { "Human", new List<string> { "West Azonian Trading Company", "Royal Azonian Army", "Royal Azonian Navy", "Order of Light", "Ars Notoria", "Slayers", "Black Squids", "Circle Knights", "Harbingers of the Eternal Weave", "Cobras", "Merchant's Guild", "Artisan's Guild", "Craftsman's Guild", "The Kingdom of Azon", "The Frayed" } },
+        { "Elf", new List<string> { "West Azonian Trading Company", "Ars Notoria", "Slayers", "Black Squids", "Merchant's Guild", "Artisan's Guild", "Craftsman's Guild", "Alran Taesi" } },
+        { "Sinai", new List<string> { "West Azonian Trading Company", "Ars Notoria", "Slayers", "Black Squids", "Cobras", "Merchant's Guild", "Artisan's Guild", "Craftsman's Guild", "The Empire of Venia", "Sinai" } },
+        { "Carcharia", new List<string> { "West Azonian Trading Company", "Slayers", "Black Squids", "Merchant's Guild", "Artisan's Guild", "Craftsman's Guild", "The Kingdom of Azon", "The Republic of Kyran", "The Emerald Empire" } },
+        { "Crabaxi", new List<string> { "West Azonian Trading Company", "Slayers", "Black Squids", "Merchant's Guild", "Artisan's Guild", "Craftsman's Guild", "The Kingdom of Azon", "The Republic of Kyran", "The Emerald Empire" } },
+        { "Molluska", new List<string> { "West Azonian Trading Company", "Slayers", "Black Squids", "Merchant's Guild", "Artisan's Guild", "Craftsman's Guild", "The Kingdom of Azon", "The Republic of Kyran", "The Emerald Empire" } },
+        { "Saltatrix", new List<string> { "West Azonian Trading Company", "Slayers", "Black Squids", "Merchant's Guild", "Artisan's Guild", "Craftsman's Guild", "The Kingdom of Azon", "The Republic of Kyran", "The Emerald Empire" } }
     };
 
-            // Fallback to "Neutral" if no factions exist for the race or the race is not found
-            if (!factionsByRace.ContainsKey(race) || factionsByRace[race].Count == 0)
-            {
+            if (!factionsByRace.ContainsKey(race))
                 return "Neutral";
-            }
 
-            // Select a random faction from the list of eligible factions
-            var eligibleFactions = factionsByRace[race];
-            return eligibleFactions[Random.Next(eligibleFactions.Count)];
+            var eligibleFactions = factionsByRace[race].Where(f =>
+                !(f == "Order of Light" && (race != "Human" || CanChannel(race))) &&
+                !(f == "Harbingers of the Eternal Weave" && race != "Human")
+            ).ToList();
+
+            return eligibleFactions.Count > 0 ? eligibleFactions[Random.Next(eligibleFactions.Count)] : "Neutral";
+        }
+
+        private static bool CanChannel(string race)
+        {
+            return race switch
+            {
+                "Elf" => true,
+                "Sinai" => true,
+                _ => false
+            };
         }
 
 
@@ -261,16 +245,41 @@ namespace LyreaRPG.AI
 
         private static void AssignChannelingPower(NPC npc)
         {
-            if (npc.Background == "Ars Notoria" || npc.Background == "Harbingers of the Eternal Weave" || npc.Background == "Faery-Pact-Bound")
+            if (npc.Race == "Elf")
+            {
+                npc.SetChannelingPower("Kaido");
+                if (!npc.Skills.ContainsKey("Channeling"))
+                {
+                    npc.Skills.Add("Channeling", new Skill("Channeling"));
+                }
+            }
+            else if (npc.Race == "Sinai")
+            {
+                npc.SetChannelingPower("Kaida");
+                if (!npc.Skills.ContainsKey("Channeling"))
+                {
+                    npc.Skills.Add("Channeling", new Skill("Channeling"));
+                }
+            }
+            else if (npc.Background == "Ars Notoria" || npc.Background == "Harbingers of the Eternal Weave" || npc.Background == "Faery-Pact-Bound")
             {
                 npc.SetChannelingPower(Random.Next(0, 2) == 0 ? "Kaida" : "Kaido");
+                if (!npc.Skills.ContainsKey("Channeling"))
+                {
+                    npc.Skills.Add("Channeling", new Skill("Channeling"));
+                }
             }
             else if (npc.Background == "Elder Blood")
             {
                 npc.SetChannelingPower("Elder Blood");
                 npc.SetSanity(80);
+                if (!npc.Skills.ContainsKey("Channeling"))
+                {
+                    npc.Skills.Add("Channeling", new Skill("Channeling"));
+                }
             }
         }
+
 
         private static List<Item> GenerateInventory()
         {

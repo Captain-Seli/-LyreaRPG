@@ -7,26 +7,16 @@ namespace LyreaRPG.Characters
 {
     public class NPC : Player
     {
+        public FriendlinessLevel Friendliness { get; set; } = FriendlinessLevel.Neutral;
+        public AggressionLevel Aggression { get; set; } = AggressionLevel.Defensive;
+
+
         public List<string> Likes { get; set; } = new();
         public List<string> Dislikes { get; set; } = new();
-        //public string Personality { get; set; }
         public Dictionary<string, string> Personality { get; set; } = new();
-        public string Faction { get; set; } = "None"; // Default faction
+        public new string Faction { get; set; } = "None"; // Default faction
         public int Likability { get; private set; } = 50; // Likability starts at neutral
-
         public List<Item> LootTable { get; set; } = new();
-
-        private Dictionary<string, string> personality = new();
-
-        public void SetPersonality(Dictionary<string, string> personalityAttributes)
-        {
-            this.personality = personalityAttributes;
-        }
-
-        public Dictionary<string, string> GetPersonality()
-        {
-            return this.personality;
-        }
 
         public NPC(string name) : base(name)
         {
@@ -38,11 +28,30 @@ namespace LyreaRPG.Characters
             Charisma = 8;
         }
 
+        // Getter Methods
+        // Display Disposition
+        public string GetDisposition()
+        {
+            return $"{Friendliness} | {Aggression}";
+        }
+
         // Setter Methods
         public void SetLikes(List<string> likes) => Likes = new List<string>(likes);
         public void SetDislikes(List<string> dislikes) => Dislikes = new List<string>(dislikes);
-        // public void SetPersonality(Dictionary<string, string> personality) => Personality = personality;
-        public void SetFaction(string faction) => Faction = faction;
+
+        public void SetPersonality()
+        {
+            // Generate personality using the PersonalityData lists
+            Personality = new Dictionary<string, string>
+            {
+                { "Trait", PersonalityData.Traits[new Random().Next(PersonalityData.Traits.Count)] },
+                { "Ideal", PersonalityData.Ideals[new Random().Next(PersonalityData.Ideals.Count)] },
+                { "Bond", PersonalityData.Bonds[new Random().Next(PersonalityData.Bonds.Count)] },
+                { "Flaw", PersonalityData.Flaws[new Random().Next(PersonalityData.Flaws.Count)] }
+            };
+        }
+
+        public new void SetFaction(string faction) => Faction = faction;
         public void SetLootTable(List<Item> lootTable) => LootTable = new List<Item>(lootTable);
 
         public void AdjustLikability(int amount)
@@ -97,7 +106,7 @@ namespace LyreaRPG.Characters
             return LootTable;
         }
 
-        public void DisplayStats()
+        public new void DisplayStats()
         {
             Console.WriteLine($"Name: {Name}");
             Console.WriteLine($"Race: {Race}");
@@ -105,9 +114,7 @@ namespace LyreaRPG.Characters
             Console.WriteLine($"Age: {Age}");
             Console.WriteLine($"Background: {Background}");
             Console.WriteLine($"Faction: {Faction}");
-            Console.WriteLine($"Level: {Level}");
 
-            // Format Personality for Display
             Console.WriteLine("Personality:");
             if (Personality != null && Personality.Count > 0)
             {
@@ -120,26 +127,34 @@ namespace LyreaRPG.Characters
             {
                 Console.WriteLine("  None");
             }
+            Console.WriteLine($"Disposition: {GetDisposition()}");
+            Console.WriteLine("Likes: " + string.Join(", ", Likes));
+            Console.WriteLine("Dislikes: " + string.Join(", ", Dislikes));
 
-            // Format Likes
-            Console.WriteLine("Likes: " + (Likes != null && Likes.Count > 0 ? string.Join(", ", Likes) : "None"));
+            Console.WriteLine("Stats:");
+            Console.WriteLine($"  Strength: {Strength}");
+            Console.WriteLine($"  Dexterity: {Dexterity}");
+            Console.WriteLine($"  Constitution: {Constitution}");
+            Console.WriteLine($"  Intelligence: {Intelligence}");
+            Console.WriteLine($"  Wisdom: {Wisdom}");
+            Console.WriteLine($"  Charisma: {Charisma}");
+            Console.WriteLine($"  Sanity: {Sanity}");
+            if (!string.IsNullOrEmpty(ChannelingPower))
+            {
+                Console.WriteLine($"  Power: {ChannelingPower}");
+            }
 
-            // Format Dislikes
-            Console.WriteLine("Dislikes: " + (Dislikes != null && Dislikes.Count > 0 ? string.Join(", ", Dislikes) : "None"));
+            Console.WriteLine("Skills:");
+            foreach (var skill in Skills)
+            {
+                Console.WriteLine($"  {skill.Key}: Level {skill.Value.Level}");
+            }
 
-            // Display Stats
-            Console.WriteLine($"Stats: Strength={Strength}, Dexterity={Dexterity}, Constitution={Constitution}, Intelligence={Intelligence}, Wisdom={Wisdom}, Charisma={Charisma}");
-
-            // Format Inventory
-            Console.WriteLine("Inventory: " + (Inventory != null && Inventory.Count > 0 ? string.Join(", ", Inventory.Select(i => $"{i.Name} ({i.Type}) - {i.Description} (x{i.Quantity}, Weight: {i.Weight})")) : "None"));
-
-            // Format Loot Table
-            Console.WriteLine("Loot Table: " + (LootTable != null && LootTable.Count > 0 ? string.Join(", ", LootTable.Select(i => $"{i.Name} ({i.Type}) - {i.Description} (x{i.Quantity}, Weight: {i.Weight})")) : "None"));
-
-            Console.WriteLine($"Likability: {Likability}");
+            Console.WriteLine("Inventory:");
+            foreach (var item in Inventory)
+            {
+                Console.WriteLine($"  {item.Name}: {item.Description} (x{item.Quantity})");
+            }
         }
-
-
-
     }
 }
